@@ -319,9 +319,11 @@ function get3TopItems(arr) {
  *   [ 1, '2' ] => 1
  */
 function getPositivesCount(arr) {
-  return arr.reduce((acc, val) => {
-    return typeof val === 'number' && val > 0 ? acc + 1 : acc;
-  }, 0);
+  return arr.reduce(
+    // it's possible to use Number.isFinite instead of typeof
+    (acc, val) => (typeof val === 'number' && val > 0 ? acc + 1 : acc),
+    0
+  );
 }
 
 /**
