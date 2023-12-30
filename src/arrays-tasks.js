@@ -594,9 +594,10 @@ function selectMany(arr, childrenSelector) {
  */
 function getElementByIndexes(arr, indexes) {
   // go through all indexes which must correspond to arr values
-  return indexes.reduce((acc, cur, i) => {
-    return i > 0 ? acc[cur] : arr[cur];
-  }, undefined);
+  return indexes.reduce(
+    (acc, cur, i) => (i > 0 ? acc[cur] : arr[cur]),
+    undefined
+  );
 }
 
 /**
