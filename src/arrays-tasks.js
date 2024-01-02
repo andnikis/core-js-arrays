@@ -8,6 +8,85 @@
  ******************************************************************************************** */
 
 /**
+ * Flattens a nested array into a single-level array.
+ *
+ * @param {array} nestedArray - The nested array to be flattened.
+ * @return {array} - A single-level array.
+ *
+ * @example
+ *    flattenArray([1, [2, [3, 4], 5], 6]) => [1, 2, 3, 4, 5, 6]
+ *    flattenArray(['a', ['b', ['c', 'd'], 'e'], 'f']) => ['a', 'b', 'c', 'd', 'e', 'f']
+ *    flattenArray([1, 2, 3, 4]) => [1, 2, 3, 4]
+ */
+function flattenArray(nestedArray) {
+  return nestedArray.flat(Infinity);
+}
+
+/**
+ * Shifts an array by n positions. If n is negative, the array is shifted to the left;
+ * if positive, it is shifted to the right.
+ *
+ * @param {array} arr - The array to be shifted.
+ * @param {number} n - The number of positions to shift the array elements.
+ * @return {array} - The shifted array.
+ *
+ * @example
+ *    shiftArray([1, 2, 3, 4, 5], 2) => [4, 5, 1, 2, 3]
+ *    shiftArray(['a', 'b', 'c', 'd'], -1) => ['b', 'c', 'd', 'a']
+ *    shiftArray([10, 20, 30, 40, 50], -3) => [40, 50, 10, 20, 30]
+ */
+function shiftArray(arr, n) {
+  const lastIndex = n > 0 ? arr.length : 0;
+
+  return arr.slice(-n).concat(arr.slice(0, lastIndex - n));
+}
+
+/**
+ * Returns the average of all items in the specified array of numbers.
+ * The result should be rounded to two decimal places.
+ *
+ * @param {array} arr - The input array
+ * @return {number} - The average of all items
+ *
+ * @example
+ *   getAverage([]) => 0
+ *   getAverage([ 1, 2, 3 ]) => 2
+ *   getAverage([ -1, 1, -1, 1 ]) => 0
+ *   getAverage([ 1, 10, 100, 1000 ])  => 277,75
+ *   getAverage([ 2, 3, 3 ])  => 2,67
+ */
+function getAverage(arr) {
+  if (arr.length === 0) return 0;
+
+  const sum = arr.reduce((acc, val) => acc + val, 0) / arr.length;
+
+  return Number.isInteger(sum) ? sum : +sum.toFixed(2);
+}
+
+/**
+ * Returns a new array where each element is the sum of the corresponding elements
+ * from two arrays. Arrays can have different lengths.
+ *
+ * @param {array} arr1 - The first array.
+ * @param {array} arr2 - The second array.
+ * @return {array} - An array containing the sum of corresponding elements.
+ *
+ * @example
+ *    sumArrays([1, 2, 3], [4, 5, 6]) => [5, 7, 9]
+ *    sumArrays([10, 20, 30], [5, 10, 15]) => [15, 30, 45]
+ *    sumArrays([-1, 0, 1], [1, 2, 3, 4]) => [0, 2, 4, 4]
+ */
+function sumArrays(arr1, arr2) {
+  const bigArray = arr1.length > arr2.length ? arr1 : arr2;
+  const smallArray = arr1.length > arr2.length ? arr2 : arr1;
+  const maxIndex = smallArray.length;
+
+  return bigArray.map((val, i) => {
+    return val + (i < maxIndex ? smallArray[i] : 0);
+  });
+}
+
+/**
  * Returns an index of the specified element in array or -1 if element is not found
  *
  * @param {array} arr
@@ -147,6 +226,7 @@ function getStringsLength(arr) {
 function insertItem(arr, item, index) {
   // it's expected to modify arr by the test
   arr.splice(index, 0, item);
+  return arr;
 }
 
 /**
@@ -164,17 +244,18 @@ function getHead(arr, n) {
 }
 
 /**
- * Returns the n last items of the specified array
+ * Returns the n last items of the specified array.
  *
- * @param {array} arr
- * @param {number} n
+ * @param {array} arr - The input array.
+ * @param {number} n - Number of items.
  *
  * @example
- *    [ 1, 3, 4, 5 ], 2  => [ 4, 5 ]
- *    [ 'a', 'b', 'c', 'd'], 3  => [ 'b', 'c', 'd' ]
+ *    getTail([ 1, 3, 4, 5 ], 2) => [ 4, 5 ]
+ *    getTail([ 'a', 'b', 'c', 'd'], 3) => [ 'b', 'c', 'd' ]
+ *    getTail([ 'a', 'b', 'c', 'd'], 0) => []
  */
 function getTail(arr, n) {
-  return arr.slice(-n);
+  return n > 0 ? arr.slice(-n) : [];
 }
 
 /**
@@ -274,13 +355,29 @@ function getSecondItems(arr) {
  *  [ 1,2,3,4,5 ] => [ 1, 2,2, 3,3,3, 4,4,4,4, 5,5,5,5,5 ]
  */
 function propagateItemsByPositionIndex(arr) {
-  const propagatedArray = arr.map((val, i) => {
+  return arr.flatMap((val, i) => {
     const item = new Array(i + 1).fill(val);
     return item;
   });
+}
 
-  // unpack all values from subarrays
-  return propagatedArray.flat();
+/**
+ * Creates an n-dimensional array and fills it with zeros.
+ *
+ * @param {number} n - Depth of outter array (n > 0).
+ * @param {number} size - Length of all arrays (size > 0).
+ * @return {array} - The n-dimensional array filled with zeros.
+ *
+ * @example
+ *    createNDimensionalArray(2, 3) => [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+ *    createNDimensionalArray(3, 2) => [[[0, 0], [0, 0]], [[0, 0], [0, 0]]]
+ *    createNDimensionalArray(4, 2) => [[[[0, 0], [0, 0]], [[0, 0], [0, 0]]], [[[0, 0], [0, 0]], [[0, 0], [0, 0]]]]
+ *    createNDimensionalArray(1, 1) => [0]
+ */
+function createNDimensionalArray(n, size) {
+  return Array.from({ length: size + 1 }, () => {
+    return new Array(n).fill(0);
+  });
 }
 
 /**
@@ -457,6 +554,39 @@ function sortCitiesArray(arr) {
 
     return diff;
   });
+}
+
+/**
+ * Checks if all strings in an array have the same length.
+ *
+ * @param {array} arr - The array of strings to be checked.
+ * @return {boolean} - True if all strings have the same length, false otherwise.
+ *
+ * @example
+ *    isSameLength(['orange', 'banana', 'cherry']) => true
+ *    isSameLength(['cat', 'dog', 'elephant']) => false
+ */
+function isSameLength(arr) {
+  const firstLength = arr[0].length;
+
+  return arr.every((val) => val.length === firstLength);
+}
+
+/**
+ * Checks if there are elements in the array where the value is equal to its index.
+ *
+ * @param {array} arr - The array of elements to be checked.
+ * @return {boolean} - True if there are elements with value equal to their index, false otherwise.
+ *
+ * @example
+ *    isValueEqualsIndex([0, 1, 2, 3, 4]) => true
+ *    isValueEqualsIndex([2, 1, 0, 4, 5]) => true
+ *    isValueEqualsIndex([10, 20, 30, 40, 50]) => false
+ */
+function isValueEqualsIndex(arr) {
+  const len = arr.length;
+
+  return arr.some((val) => val >= 0 && val <= len);
 }
 
 /**
@@ -664,4 +794,11 @@ module.exports = {
   selectMany,
   getElementByIndexes,
   swapHeadAndTail,
+  sumArrays,
+  shiftArray,
+  getAverage,
+  isSameLength,
+  createNDimensionalArray,
+  isValueEqualsIndex,
+  flattenArray,
 };
