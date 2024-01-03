@@ -103,6 +103,23 @@ function findElement(arr, value) {
 }
 
 /**
+ * Every month, you record your income and expenses.
+ * Expenses may be greater than income.
+ * You need to calculate the final balance.
+ *
+ * @param {array} arr - The input array [[income, expence], ...]
+ * @return {number} - The final balance.
+ *
+ * @example
+ *   calculateBalance([ [ 10, 8 ], [ 5, 1 ] ]) => (10 - 8) + (5 - 1) = 2 + 4 = 6
+ *   calculateBalance([ [ 10, 8 ], [ 1, 5 ] ])  => (10 - 8) + (1 - 5) = 2 + -4 = -2
+ *   calculateBalance([]) => 0
+ */
+function calculateBalance(arr) {
+  return arr.reduce((acc, val) => acc + val[0] - val[1], 0);
+}
+
+/**
  * Generates an array of odd numbers of the specified length
  *
  * @param {number} len
@@ -722,7 +739,7 @@ function selectMany(arr, childrenSelector) {
  *   ['one','two','three'], [2]       => 'three'  (arr[2])
  *   [[[ 1, 2, 3]]], [ 0, 0, 1 ]      => 2        (arr[0][0][1])
  */
-function getElementByIndexes(arr, indexes) {
+function getElementByIndices(arr, indexes) {
   // go through all indexes which must correspond to arr values
   return indexes.reduce(
     (acc, cur, i) => (i > 0 ? acc[cur] : arr[cur]),
@@ -762,6 +779,73 @@ function swapHeadAndTail(arr) {
   return arr.slice(center + tailShift).concat(unmoved, arr.slice(0, center));
 }
 
+/**
+ * Returns an array containing indices of odd elements in the input array.
+ *
+ * @param {array} numbers - The array of numbers.
+ * @return {array} - An array containing indices of odd elements.
+ *
+ * @example
+ *    getIndicesOfOddNumbers([1, 2, 3, 4, 5]) => [0, 2, 4]
+ *    getIndicesOfOddNumbers([2, 4, 6, 8, 10]) => []
+ *    getIndicesOfOddNumbers([11, 22, 33, 44, 55]) => [0, 2, 4]
+ */
+function getIndicesOfOddNumbers(numbers) {
+  return numbers.reduce((acc, val, i) => {
+    if (val % 2 !== 0) acc.push(i);
+    return acc;
+  }, []);
+}
+
+/**
+ * Returns the n largest values from the specified array
+ *
+ * @param {array} arr - The input array
+ * @param {number} n - Number of maximum values.
+ * @return {array} - n largest values.
+ *
+ * @example
+ *   getMaxItems([], 5) => []
+ *   getMaxItems([ 1, 2 ], 1) => [ 2]
+ *   getMaxItems([ 2, 3, 1 ], 2) => [ 3, 2]
+ *   getMaxItems([ 10, 2, 7, 5, 3, -5 ], 3) => [ 10, 7, 5 ]
+ *   getMaxItems([ 10, 10, 10, 10 ], 3) => [ 10, 10, 10 ]
+ */
+function getMaxItems(arr, n) {
+  const maxItems = arr.slice().sort((a, b) => b - a);
+
+  return maxItems.slice(0, n);
+}
+
+/**
+ * Returns the array of RGB Hex strings from the specified array of numbers.
+ *
+ * @param {array} arr - The input array.
+ * @return {array} - The array of RGB Hex strings.
+ *
+ * @example
+ *    getHexRGBValues([ 0, 255, 16777215]) => [ '#000000', '#0000FF', '#FFFFFF' ]
+ *    getHexRGBValues([]) => []
+ */
+function getHexRGBValues(arr) {
+  const RGB_CHAR = '#';
+
+  return arr.map((num) => {
+    let colorMask = num;
+
+    const redGreenBlue = [0, 0, 0].map(() => {
+      const color = colorMask % 256;
+      colorMask = Math.floor(colorMask / 256);
+      return color;
+    });
+
+    return redGreenBlue.reduceRight(
+      (acc, val) => acc + val.toString(16).padStart(2, '0').toUpperCase(),
+      RGB_CHAR
+    );
+  });
+}
+
 module.exports = {
   findElement,
   generateOdds,
@@ -792,7 +876,6 @@ module.exports = {
   distinct,
   group,
   selectMany,
-  getElementByIndexes,
   swapHeadAndTail,
   sumArrays,
   shiftArray,
@@ -801,4 +884,9 @@ module.exports = {
   createNDimensionalArray,
   isValueEqualsIndex,
   flattenArray,
+  calculateBalance,
+  getIndicesOfOddNumbers,
+  getMaxItems,
+  getHexRGBValues,
+  getElementByIndices,
 };
