@@ -392,9 +392,13 @@ function propagateItemsByPositionIndex(arr) {
  *    createNDimensionalArray(1, 1) => [0]
  */
 function createNDimensionalArray(n, size) {
-  return Array.from({ length: size + 1 }, () => {
-    return new Array(n).fill(0);
-  });
+  if (n === 1) {
+    return Array.from({ length: size }).fill(0);
+  }
+
+  return Array.from({ length: size }, () =>
+    createNDimensionalArray(n - 1, size)
+  );
 }
 
 /**
@@ -846,6 +850,70 @@ function getHexRGBValues(arr) {
   });
 }
 
+/**
+ * Finds the length of the longest increasing subsequence of a given array of integers.
+ *
+ * @param {array} nums - The array of integers.
+ * @return {number} - The length of the longest increasing subsequence.
+ *
+ * @example
+ *    findLongestIncreasingSubsequence([10, 22, 9, 33, 21, 50, 41, 60, 80]) => 3
+ *    findLongestIncreasingSubsequence([3, 10, 2, 1, 20]) => 2
+ *    findLongestIncreasingSubsequence([50, 3, 10, 7, 40, 80]) => 3
+ */
+function findLongestIncreasingSubsequence(nums) {
+  // 1 means there is not an increasing subsequence
+  const MIN_LENGTH = 1;
+  let maxLen = MIN_LENGTH;
+
+  function findSubsequenceByRecursion(currentMax, arr, startIndex) {
+    const nextCurrentMax =
+      arr[startIndex] < arr[startIndex + 1] ? currentMax + 1 : MIN_LENGTH;
+    maxLen = Math.max(nextCurrentMax, maxLen);
+
+    if (startIndex < arr.length - 1) {
+      findSubsequenceByRecursion(nextCurrentMax, arr, startIndex + 1);
+    }
+  }
+
+  findSubsequenceByRecursion(MIN_LENGTH, nums, 0);
+  return maxLen;
+}
+
+/**
+ * Finds and returns an array containing only the common elements found in two arrays.
+ *
+ * @param {array} arr1 - The first array.
+ * @param {array} arr2 - The second array.
+ * @return {array} - An array containing common elements.
+ *
+ * @example
+ *    findCommonElements([1, 2, 3], [2, 3, 4]) => [ 2, 3 ]
+ *    findCommonElements(['a', 'b', 'c'], ['b', 'c', 'd']) => [ 'b', 'c' ]
+ *    findCommonElements([1, 2, 3], ['a', 'b', 'c']) => []
+ */
+function findCommonElements(arr1, arr2) {
+  return arr1.filter((val) => arr2.indexOf(val) >= 0);
+}
+
+/**
+ * Breaks an array into chunks of the specified size.
+ *
+ * @param {array} arr - The array to be broken into chunks.
+ * @param {number} chunkSize - The size of each chunk.
+ * @return {array} - An array of chunks.
+ *
+ * @example
+ *    createChunks([1, 2, 3, 4, 5, 6, 7], 3) => [[1, 2, 3], [4, 5, 6], [7]]
+ *    createChunks(['a', 'b', 'c', 'd', 'e'], 2) => [['a', 'b'], ['c', 'd'], ['e']]
+ *    createChunks([10, 20, 30, 40, 50], 1) => [[10], [20], [30], [40], [50]]
+ */
+function createChunks(arr, chunkSize) {
+  return Array.from({ length: Math.ceil(arr.length / chunkSize) }, (val, i) =>
+    arr.slice(i * chunkSize, i * chunkSize + chunkSize)
+  );
+}
+
 module.exports = {
   findElement,
   generateOdds,
@@ -889,4 +957,7 @@ module.exports = {
   getMaxItems,
   getHexRGBValues,
   getElementByIndices,
+  findLongestIncreasingSubsequence,
+  findCommonElements,
+  createChunks,
 };
